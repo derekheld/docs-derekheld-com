@@ -1,0 +1,25 @@
+name: "Deploy"
+description: "Deploy site to docs.derekheld.com"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+permissions:
+  id-token: write
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: 'actions/checkout@v2'
+    - id: 'gcp-token-auth'
+      name: 'Impersonate service account'
+      uses: 'google-github-actions/auth@v0
+      with:
+        workload_identity_provider: ${{secrets.WIF_IDENTITY_POOL}}
+        service_account: ${{secrets.GHA_SVC_ACCOUNT}}
+        token_format: 'access_token'
+    - id: 'deploy'
+      name: 'Firebase deploy'
+      run: |
+        
